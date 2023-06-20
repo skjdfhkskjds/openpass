@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	jsonFile = "./keychain/passwords.json"
+	jsonFile = "./passwords.json"
 
 	passwordLength = 12
 	digits         = "0123456789"
