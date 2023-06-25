@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
+	"net/url"
 	"os"
 	"time"
 )
@@ -26,7 +27,7 @@ type Password struct {
 
 // generatePassword generates a password with at least one
 // digit and one special character
-func (cdc Codec) generatePassword() string {
+func (cdc *Codec) generatePassword() string {
 	rand.Seed(time.Now().UnixNano())
 	passBytes := make([]byte, passwordLength)
 	passBytes[0] = digits[rand.Intn(len(digits))]
@@ -42,29 +43,17 @@ func (cdc Codec) generatePassword() string {
 }
 
 // TODO: return error if pass already exists
-func (cdc Codec) Set(domain, username string) string {
+func (cdc *Codec) Set(domain, username string) string {
 	cdc.SetSalt(cdc.salt)
 	password := cdc.generatePassword()
-	encryptedPassword, err := cdc.encrypt(password)
-	if err != nil {
-		panic(err)
-	}
-
-	result := Password{
-		Domain:   domain,
-		Username: username,
-		Password: encryptedPassword,
-		Salt:     cdc.salt,
-	}
-
-	if err := appendJSON(jsonFile, result); err != nil {
+	if err := cdc.setPassword(domain, username, password); err != nil {
 		panic(err)
 	}
 
 	return password
 }
 
-func (cdc Codec) Get(domain string) string {
+func (cdc *Codec) Get(domain string) string {
 	password := findFromJSON(jsonFile, domain)
 	if password.Domain == "" {
 		return "Password for " + domain + " not found"
@@ -79,35 +68,23 @@ func (cdc Codec) Get(domain string) string {
 	return pass
 }
 
-func (cdc Codec) Update(domain string, password string) string {
+func (cdc *Codec) Update(domain string, password string) string {
 	username := findFromJSON(jsonFile, domain).Username
-
 	cdc.Delete(domain)
 	cdc.SetSalt(cdc.salt)
-	encryptedPassword, err := cdc.encrypt(password)
-	if err != nil {
+	if err := cdc.setPassword(domain, username, password); err != nil {
 		panic(err)
 	}
 
-	result := Password{
-		Domain:   domain,
-		Username: username,
-		Password: encryptedPassword,
-		Salt:     cdc.salt,
-	}
-
-	if err := appendJSON(jsonFile, result); err != nil {
-		panic(err)
-	}
 	return password
 }
 
-func (cdc Codec) Copy(domain1, domain2 string) string {
+func (cdc *Codec) Copy(domain1, domain2 string) string {
 	password := cdc.Get(domain1)
 	return cdc.Update(domain2, password)
 }
 
-func (cdc Codec) Delete(domain string) {
+func (cdc *Codec) Delete(domain string) {
 	passwords := readJSON(jsonFile)
 
 	for i, password := range passwords {
@@ -130,7 +107,7 @@ func (cdc Codec) Delete(domain string) {
 	cdc.salt = nil
 }
 
-func (cdc Codec) List() string {
+func (cdc *Codec) List() string {
 	passwords := readJSON(jsonFile)
 	output := ""
 	for _, password := range passwords {
@@ -138,7 +115,42 @@ func (cdc Codec) List() string {
 		if err != nil {
 			panic(err)
 		}
-		output += fmt.Sprintf("domain: %s\npassword: %s\n", password.Domain, pass)
+		output += "-------------------\n"
+		output += fmt.Sprintf("domain: %s\n", password.Domain)
+		output += fmt.Sprintf("username: %s\n", password.Username)
+		output += fmt.Sprintf("password: %s\n", pass)
+		output += "-------------------\n\n"
 	}
 	return output
+}
+
+func (cdc *Codec) setPassword(domain, username, password string) error {
+	encryptedPassword, err := cdc.encrypt(password)
+	if err != nil {
+		return err
+	}
+
+	result := Password{
+		Domain:   domain,
+		Username: username,
+		Password: encryptedPassword,
+		Salt:     cdc.salt,
+	}
+
+	if err := appendJSON(jsonFile, result); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ReduceDomain parses a domain url and returns the host
+func ReduceDomain(domain string) string {
+	parsedURL, err := url.Parse(domain)
+	if err != nil {
+		// Handle parsing error
+		return domain
+	}
+
+	return parsedURL.Host
 }

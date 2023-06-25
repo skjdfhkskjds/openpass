@@ -98,6 +98,7 @@ func GenerateSalt() []byte {
 func (cdc *Codec) SetSalt(salt []byte) {
 	if salt == nil {
 		salt = GenerateSalt()
+		cdc.salt = salt
 		cdc.key = append(cdc.key, salt...)
 	}
 	cdc.salt = salt
