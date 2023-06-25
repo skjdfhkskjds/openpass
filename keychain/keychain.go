@@ -42,8 +42,12 @@ func (cdc *Codec) generatePassword() string {
 	return password
 }
 
-// TODO: return error if pass already exists
 func (cdc *Codec) Set(domain, username string) string {
+	existing := findFromJSON(jsonFile, domain)
+	if existing.Domain != "" {
+		cdc.Delete(domain)
+	}
+
 	cdc.SetSalt(cdc.salt)
 	password := cdc.generatePassword()
 	if err := cdc.setPassword(domain, username, password); err != nil {
@@ -144,10 +148,9 @@ func (cdc *Codec) setPassword(domain, username, password string) error {
 	return nil
 }
 
-// ReduceDomain parses a domain url and returns the host
 func ReduceDomain(domain string) string {
 	parsedURL, err := url.Parse(domain)
-	if err != nil {
+	if err != nil || parsedURL.Host == "" {
 		// Handle parsing error
 		return domain
 	}
