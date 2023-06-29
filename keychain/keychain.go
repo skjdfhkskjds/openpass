@@ -44,7 +44,7 @@ func (cdc *Codec) generatePassword() string {
 
 func (cdc *Codec) Set(domain, username string) string {
 	existing := findFromJSON(jsonFile, domain)
-	if existing.Domain != "" {
+	if existing.Domain != "" && existing.Username == username {
 		cdc.Delete(domain)
 	}
 
