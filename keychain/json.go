@@ -25,17 +25,17 @@ func appendJSON(jsonFile string, password Password) error {
 }
 
 // findFromJSON finds a password from a JSON file
-func findFromJSON(jsonFile, domain string) Password {
+func findFromJSON(jsonFile, domain, username string) (Password, bool) {
 	passwords := readJSON(jsonFile)
 
 	for _, password := range passwords {
-		if password.Domain == domain {
-			return password
+		if password.Domain == domain && password.Username == username {
+			return password, true
 		}
 	}
 
 	// Read the JSON file into a byte array
-	return Password{}
+	return Password{}, false
 }
 
 // readJSON reads a JSON file and returns a slice of Passwords

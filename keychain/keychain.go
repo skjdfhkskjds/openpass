@@ -43,8 +43,8 @@ func (cdc *Codec) generatePassword() string {
 }
 
 func (cdc *Codec) Set(domain, username string) string {
-	existing := findFromJSON(jsonFile, domain)
-	if existing.Domain != "" && existing.Username == username {
+	_, found := findFromJSON(jsonFile, domain, username)
+	if !found {
 		cdc.Delete(domain)
 	}
 
@@ -57,10 +57,11 @@ func (cdc *Codec) Set(domain, username string) string {
 	return password
 }
 
-func (cdc *Codec) Get(domain string) string {
-	password := findFromJSON(jsonFile, domain)
-	if password.Domain == "" {
-		return "Password for " + domain + " not found"
+func (cdc *Codec) Get(domain, username string) (string, string) {
+	password, found := findFromJSON(jsonFile, domain, username)
+	if !found {
+		// TODO: so bad
+		return "Password for " + domain + " not found", ""
 	}
 
 	cdc.SetSalt(password.Salt)
@@ -69,11 +70,10 @@ func (cdc *Codec) Get(domain string) string {
 		panic(err)
 	}
 
-	return pass
+	return username, pass
 }
 
-func (cdc *Codec) Update(domain string, password string) string {
-	username := findFromJSON(jsonFile, domain).Username
+func (cdc *Codec) Update(domain, username, password string) string {
 	cdc.Delete(domain)
 	cdc.SetSalt(cdc.salt)
 	if err := cdc.setPassword(domain, username, password); err != nil {
@@ -83,9 +83,9 @@ func (cdc *Codec) Update(domain string, password string) string {
 	return password
 }
 
-func (cdc *Codec) Copy(domain1, domain2 string) string {
-	password := cdc.Get(domain1)
-	return cdc.Update(domain2, password)
+func (cdc *Codec) Copy(domain1, username1, domain2, username2 string) string {
+	_, password := cdc.Get(domain1, username1)
+	return cdc.Update(domain2, username2, password)
 }
 
 func (cdc *Codec) Delete(domain string) {

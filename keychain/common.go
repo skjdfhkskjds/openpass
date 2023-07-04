@@ -1,5 +1,6 @@
 package keychain
 
+// TODO: deprecated message info
 func HelpMessage() string {
 	return "'help': display this message\n" +
 		"'<keychain password> set <domain> <username>': set a password for a domain\n" +

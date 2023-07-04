@@ -20,33 +20,39 @@ func main() {
 	}
 
 	cdc := keychain.GenerateCodec(flags[0], nil)
-	var result string
+
+	var (
+		username string
+		password string
+	)
 
 	domain := keychain.ReduceDomain(flags[2])
+	username = flags[3]
 	if flags[1] == "set" {
 		if len(flags) < 4 {
 			panic("not enough arguments\nexpected: <password> set <domain> <username>")
 		}
-		result = (cdc.Set(domain, flags[3]))
+		password = (cdc.Set(domain, flags[3]))
 	} else if flags[1] == "get" {
-		result = (cdc.Get(domain))
+		username, password = (cdc.Get(domain, username))
 	} else if flags[1] == "update" {
-		if len(flags) < 4 {
+		if len(flags) < 5 {
 			panic("not enough arguments\nexpected: <password> update <domain> <password>")
 		}
-		result = (cdc.Update(domain, flags[3]))
+		password = (cdc.Update(domain, username, flags[4]))
 	} else if flags[1] == "copy" {
-		if len(flags) < 4 {
+		if len(flags) < 6 {
 			panic("not enough arguments\nexpected: <password> copy <domain> <username>")
 		}
-		result = (cdc.Copy(domain, flags[3]))
+		password = (cdc.Copy(domain, username, flags[4], flags[5]))
 	} else if flags[1] == "delete" {
 		cdc.Delete(domain)
-		result = ("deleted")
+		password = ("deleted")
 	} else {
-		result = ("invalid flag")
-		result = (keychain.HelpMessage())
+		password = ("invalid flag")
+		password = (keychain.HelpMessage())
 	}
 
-	fmt.Println(result)
+	fmt.Println(username)
+	fmt.Println(password)
 }
