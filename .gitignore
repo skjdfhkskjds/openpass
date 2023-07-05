@@ -1,2 +1,3 @@
 # JSON files
 **/*.json
+!**/manifest.json

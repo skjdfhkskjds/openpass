@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-func appendJSON(jsonFile string, password Password) error {
-	passwords := readJSON(jsonFile)
+func AppendJSON(jsonFile string, password Password) error {
+	passwords := ReadJSON(jsonFile)
 
 	passwords = append(passwords, password)
 
@@ -25,8 +25,8 @@ func appendJSON(jsonFile string, password Password) error {
 }
 
 // findFromJSON finds a password from a JSON file
-func findFromJSON(jsonFile, domain, username string) (Password, bool) {
-	passwords := readJSON(jsonFile)
+func FindFromJSON(jsonFile, domain, username string) (Password, bool) {
+	passwords := ReadJSON(jsonFile)
 
 	for _, password := range passwords {
 		if password.Domain == domain && password.Username == username {
@@ -39,7 +39,7 @@ func findFromJSON(jsonFile, domain, username string) (Password, bool) {
 }
 
 // readJSON reads a JSON file and returns a slice of Passwords
-func readJSON(jsonFile string) []Password {
+func ReadJSON(jsonFile string) []Password {
 	// Open the JSON file
 	jsonData, err := ioutil.ReadFile(jsonFile)
 	if err != nil || len(jsonData) == 0 {

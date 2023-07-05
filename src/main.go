@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"main/common"
 	"main/keychain"
 	"os"
 )
@@ -9,7 +10,7 @@ import (
 func main() {
 	flags := os.Args[1:]
 	if len(flags) == 1 && flags[0] == "help" {
-		fmt.Println(keychain.HelpMessage())
+		fmt.Println(common.HelpMessage())
 		return
 	} else if len(flags) == 2 && flags[1] == "list" {
 		cdc := keychain.GenerateCodec(flags[0], nil)
@@ -50,7 +51,7 @@ func main() {
 		password = ("deleted")
 	} else {
 		password = ("invalid flag")
-		password = (keychain.HelpMessage())
+		password = (common.HelpMessage())
 	}
 
 	fmt.Println(username)

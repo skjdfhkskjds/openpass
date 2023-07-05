@@ -7,7 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"io"
-	"log"
+	"main/types"
 
 	"golang.org/x/crypto/pbkdf2"
 )
@@ -15,13 +15,22 @@ import (
 const (
 	iterations = 100000
 	keyLength  = 32 // 32 bytes = 256 bits (AES-256)
-	saltLength = 16 // 16 bytes = 128 bits
 )
 
 // Codec is the master key used to encrypt and decrypt passwords
 type Codec struct {
 	key  []byte
 	salt []byte
+}
+
+// GenerateKey generates a new key using PBKDF2
+func GenerateCodec(password string, salt []byte) *Codec {
+	// Derive the key using PBKDF2
+	key := pbkdf2.Key([]byte(password), salt, iterations, keyLength, sha256.New)
+
+	// Append the salt to the key
+	key = append(key, salt...)
+	return &Codec{key, salt}
 }
 
 // encrypt encrypts the password using the key
@@ -76,28 +85,9 @@ func (cdc Codec) decrypt(encodedData string) (string, error) {
 	return string(password), nil
 }
 
-// GenerateKey generates a new key using PBKDF2
-func GenerateCodec(password string, salt []byte) *Codec {
-	// Derive the key using PBKDF2
-	key := pbkdf2.Key([]byte(password), salt, iterations, keyLength, sha256.New)
-
-	// Append the salt to the key
-	key = append(key, salt...)
-	return &Codec{key, salt}
-}
-
-// GenerateSalt returns a random salt of saltLength bytes
-func GenerateSalt() []byte {
-	salt := make([]byte, saltLength)
-	if _, err := io.ReadFull(rand.Reader, salt); err != nil {
-		log.Fatal(err)
-	}
-	return salt
-}
-
 func (cdc *Codec) SetSalt(salt []byte) {
 	if salt == nil {
-		salt = GenerateSalt()
+		salt = types.GenerateSalt()
 		cdc.salt = salt
 		cdc.key = append(cdc.key, salt...)
 	}
