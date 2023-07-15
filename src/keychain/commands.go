@@ -42,8 +42,7 @@ func (cdc *Codec) Set(domain, username string) string {
 func (cdc *Codec) Get(domain, username string) (string, string) {
 	password, found := FindFromJSON(cdc.PasswordsFilePath, domain, username)
 	if !found {
-		// TODO: so bad
-		return "Password for " + domain + " not found", ""
+		PanicRed(MissingEntryMessage, domain, username)
 	}
 
 	cdc.SetSalt(password.Salt)
@@ -101,11 +100,23 @@ func (cdc *Codec) List() string {
 		if err != nil {
 			PanicRed(err.Error())
 		}
-		output += "-------------------\n"
-		output += fmt.Sprintf("domain: %s\n", password.Domain)
-		output += fmt.Sprintf("username: %s\n", password.Username)
-		output += fmt.Sprintf("password: %s\n", pass)
-		output += "-------------------\n\n"
+		password.Password = pass
+		output += formatPassword(password)
 	}
 	return output
+}
+
+func formatPassword(pswd Password) string {
+	return fmt.Sprintf(
+		`
+		------------------------------
+		domain: %s
+		username: %s
+		password: %s
+		------------------------------
+		`,
+		pswd.Domain,
+		pswd.Username,
+		pswd.Password,
+	)
 }

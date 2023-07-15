@@ -28,6 +28,11 @@ func Report(format string, a ...interface{}) {
 	fmt.Printf(format, a...)
 }
 
+// ReportCyan reports a message in cyan
+func ReportCyan(format string, a ...interface{}) {
+	color.Cyan(fmt.Sprintf(format, a...))
+}
+
 // ReportGreen reports a message in green
 func ReportGreen(format string, a ...interface{}) {
 	color.Green(fmt.Sprintf(format, a...))

@@ -149,7 +149,7 @@ var (
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			ReportGreen("Listing passwords...")
-			Report(cdc.List())
+			ReportCyan(cdc.List())
 		},
 	}
 )

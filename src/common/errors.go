@@ -42,6 +42,11 @@ const (
 	MissingConfigPath = "missing config file path, generating..."
 )
 
+// Get Messages
+const (
+	MissingEntryMessage = "entry does not exist for domain: %s, username: %s"
+)
+
 func InvalidCommand(message string) string {
 	return fmt.Sprintf("%s %s", baseErrorMessage, message)
 }
