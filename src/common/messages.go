@@ -14,19 +14,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package types
+package common
 
 import (
-	"crypto/rand"
-	"io"
-	"log"
+	"fmt"
+	"os"
+
+	"github.com/fatih/color"
 )
 
-// GenerateSalt returns a random salt of saltLength bytes
-func GenerateSalt(saltLength int) []byte {
-	salt := make([]byte, saltLength)
-	if _, err := io.ReadFull(rand.Reader, salt); err != nil {
-		log.Fatal(err)
-	}
-	return salt
+// Report reports a message in white
+func Report(format string, a ...interface{}) {
+	fmt.Printf(format, a...)
+}
+
+// ReportGreen reports a message in green
+func ReportGreen(format string, a ...interface{}) {
+	color.Green(fmt.Sprintf(format, a...))
+}
+
+// ReportYellow reports a message in yellow
+func ReportYellow(format string, a ...interface{}) {
+	color.Yellow(fmt.Sprintf(format, a...))
+}
+
+// PanicRed reports a message in red and exits the program
+func PanicRed(format string, a ...interface{}) {
+	color.Red(fmt.Sprintf(format, a...))
+	os.Exit(1)
 }
