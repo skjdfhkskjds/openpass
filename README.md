@@ -1,6 +1,6 @@
 # OpenPass 🔒
 
-OpenPass is a simple password manager written in Go. Uses the PBKDF2 cryptographic algorithm to encrypt passwords. As of the latest release (v0.0.3), it is a CLI tool only.
+OpenPass is a simple password manager written in Go. Uses the PBKDF2 cryptographic algorithm to encrypt passwords. As of the latest release, it is a CLI tool only.
 
 This is a trustless password manager. Every password is saved in an encrypted form, and can only be properly decrypted with the master password. The master password is never saved, and is only used to decrypt the passwords when needed.
 
