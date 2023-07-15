@@ -25,7 +25,6 @@ import (
 	. "openpass/common"
 )
 
-// TODO: add tests, dynamically update config file
 func main() {
 	ReportGreen("Enter your password: ")
 	inputPassword, err := terminal.ReadPassword(int(syscall.Stdin))

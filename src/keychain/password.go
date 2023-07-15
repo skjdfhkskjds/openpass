@@ -18,7 +18,6 @@ package keychain
 
 import (
 	"math/rand"
-	"net/url"
 	"time"
 )
 
@@ -71,16 +70,6 @@ func (cdc *Codec) setPassword(domain, username, password string) error {
 	}
 
 	return nil
-}
-
-func ReduceDomain(domain string) string {
-	parsedURL, err := url.Parse(domain)
-	if err != nil || parsedURL.Host == "" {
-		// Handle parsing error
-		return domain
-	}
-
-	return parsedURL.Host
 }
 
 func Remove(slice []Password, i int) []Password {

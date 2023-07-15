@@ -175,7 +175,7 @@ func SetupCommands(userPassword string) *cobra.Command {
 			PanicRed(InvalidCommand(BaseCommandArgs))
 		}
 
-		domain = keychain.ReduceDomain(domain)
+		domain = ReduceDomain(domain)
 	}
 
 	// Add flags
@@ -193,6 +193,7 @@ func SetupCommands(userPassword string) *cobra.Command {
 	return rootCmd
 }
 
+// outputResult outputs the username and password to the user
 func outputResult(username, password string) {
 	ReportGreen("Username: %s", username)
 	if !cdc.HidePassword {

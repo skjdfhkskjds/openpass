@@ -1,10 +1,23 @@
 package common
 
 import (
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
 )
+
+// ReduceDomain reduces a domain to its base domain
+// e.g. https://www.google.com -> google.com
+func ReduceDomain(domain string) string {
+	parsedURL, err := url.Parse(domain)
+	if err != nil || parsedURL.Host == "" {
+		// Handle parsing error
+		return domain
+	}
+
+	return parsedURL.Host
+}
 
 // GetPathOfCaller returns the absolute path of the file
 // that called this function
