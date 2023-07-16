@@ -180,7 +180,7 @@ func SetupCommands(userPassword string) *cobra.Command {
 
 	// Add flags
 	rootCmd.PersistentFlags().StringVar(&domain, "domain", "", "Domain name")
-	getCmd.PersistentFlags().StringVar(&username, "user", "", "Username")
+	rootCmd.PersistentFlags().StringVar(&username, "user", "", "Username")
 
 	// Add all commands to root
 	rootCmd.AddCommand(setCmd, getCmd, updateCmd, copyCmd, deleteCmd, listCmd)
