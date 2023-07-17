@@ -23,7 +23,6 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh/terminal"
 
-	"openpass/commands/autocomplete"
 	"openpass/keychain"
 	"openpass/types"
 
@@ -185,10 +184,11 @@ func SetupCommands(userPassword string) *cobra.Command {
 	// Add all commands to root
 	rootCmd.AddCommand(setCmd, getCmd, updateCmd, copyCmd, deleteCmd, listCmd)
 
+	// TODO: fix autocomplete
 	// Generate shell completion scripts
-	if config.GenerateAutoCompleteScripts {
-		autocomplete.GenerateFilePath(rootCmd)
-	}
+	// if config.GenerateAutoCompleteScripts {
+	// 	autocomplete.GenerateFilePath(rootCmd)
+	// }
 
 	return rootCmd
 }
